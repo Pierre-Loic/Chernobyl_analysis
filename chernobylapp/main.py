@@ -12,12 +12,15 @@ class Orchestrator:
     def run(self, viz="wordcloud", to_file=False):
         sentences = pd.Series()
         data = self.data_import.create_corpus()
-        if viz=="wordcloud":
+        if viz=="wordcloud" or viz=="wordcloud_img":
             for df in data:
                 sentences = pd.concat([sentences, df["sentence"]], ignore_index=True)
             nlp = dp.Process_NLP(sentences, lang=self.lang)
             wcloud = iv.Viz_wordcloud(nlp.bag_of_words())
-            wcloud.classic_word_cloud()
+            if viz=="wordcloud":
+                wcloud.classic_word_cloud()
+            elif viz=="wordcloud_img":
+                wcloud.image_word_cloud()
         else:
             pass
 

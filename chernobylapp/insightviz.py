@@ -1,7 +1,10 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
+
+package_directory = os.path.dirname(os.path.abspath(__file__))
 
 class Viz_video:
     pass
@@ -30,9 +33,9 @@ class Viz_wordcloud:
     def color_word_cloud(self):
         pass
 
-    def image_word_cloud(self, file_name):
+    def image_word_cloud(self, file_name=None):
         """ Generate a word cloud from an picture of Chernobyl """
-        Chernobyl_coloring = np.array(Image.open("D:\__dossier_essais\PyconFR\Chernobyl\Images\Chernobyl_2.png"))
+        Chernobyl_coloring = np.array(Image.open(package_directory + "\\raw_data\\Chernobyl.png"))
         wc = WordCloud(background_color="white", mask=Chernobyl_coloring, contour_width=1, random_state=42)
         wc.generate_from_frequencies(self.data)
         image_colors = ImageColorGenerator(Chernobyl_coloring)
