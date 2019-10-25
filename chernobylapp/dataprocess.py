@@ -1,3 +1,7 @@
+#
+# PYCONFR 2019 - PLB - Conférence Chernobyl/NLP
+#
+
 import os
 from nltk.stem.snowball import FrenchStemmer
 from nltk.stem import WordNetLemmatizer 
@@ -45,6 +49,10 @@ class Process_NLP:
         bag_of_words = vectorizer.transform(self.data)
         sum_words = bag_of_words.sum(axis=0)
         return [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items() if word not in self.stop_words]
+
+    def lda(self):
+        """ Use LDA for topic modelling """
+        pass
 
 class Cluster:
     pass

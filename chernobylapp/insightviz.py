@@ -1,3 +1,7 @@
+#
+# PYCONFR 2019 - PLB - Conférence Chernobyl/NLP
+#
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +11,21 @@ from PIL import Image
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
 class Viz_video:
-    pass
+    """ Create video from wordcloud files """
+
+    def __init__(self):
+        pass
+
+    def add_time(self, df):
+        """ Add time on the wordcloud image """
+        print(df.index[0])
+        print(df.index[-1])
+
+    def add_nb(self):
+        pass
+
+    def add_indicator(self):
+        pass
 
 class Viz_wordcloud:
     
@@ -30,8 +48,19 @@ class Viz_wordcloud:
         plt.axis('off')
         self.output(file_name)
 
-    def color_word_cloud(self):
-        pass
+    def color_word_cloud(self, color_to_words, default_color="grey", file_name=None):
+        """ Generate word cloud with meaningful colors """
+        # not debug
+        wc = WordCloud(collocations=False).generate_from_frequencies(self.data)
+        word_to_color = {word: color
+                              for (color, words) in color_to_words.items()
+                              for word in words}   
+        grouped_color_func = lambda word, font_size, position, orientation,random_state,font_path: word_to_color.get(word, default_color) 
+        wc.recolor(color_func=grouped_color_func)
+        plt.figure(figsize=(15, 12))
+        plt.imshow(wc, interpolation="bilinear")
+        plt.axis('off')
+        self.output(file_name)
 
     def image_word_cloud(self, file_name=None):
         """ Generate a word cloud from an picture of Chernobyl """

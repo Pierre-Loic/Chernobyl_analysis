@@ -1,3 +1,7 @@
+#
+# PYCONFR 2019 - PLB - Conférence Chernobyl/NLP
+#
+
 import os
 import re
 import pandas as pd
@@ -45,18 +49,6 @@ class Data_import:
     def remove_n(self, data):
         """ Remove \n in the data """
         return [d.replace("\n", "") for d in data]
-
-    def extract_number(self):
-        pass
-
-    def extract_time(self):
-        pass
-
-    def extract_sentence(self):
-        pass
-
-    def extract_italic_open(self):
-        pass
 
     def clean_data(self, data):
         """ Extract data from subtitles """
@@ -111,10 +103,26 @@ class Data_import:
         df["time_begin"] = pd.to_datetime(df["time_begin"])
         df["time_end"] = pd.to_datetime(df["time_end"])
         df["time_delta"] = df["time_end"] - df["time_begin"]
-        df = df.set_index("time_begin")
+        df["time"] = df["time_end"] - df["time_begin"][0]
+        df = df.set_index("time")
         df = df.drop(['time_end'], axis=1)
+        df = df.drop(['time_begin'], axis=1)
         return df
+
+    def split_for_video(self, df, time_end_min=10, step_s=10):
+        """ Split the dataframe into small dataframe of same duration """
+        df_list = []
+        time_end = pd.Timedelta(time_end_min*60, unit='s')
+        time_begin = pd.Timedelta(0, unit='s')
+        delta_t = pd.Timedelta(step_s, unit='s')
+        while not(all(df.index < time_end)):
+            temp = df[df.index < time_end]
+            result = temp[temp.index > time_begin]
+            time_end += delta_t
+            time_begin += delta_t
+            df_list.append(result)
+        return df_list
 
 if __name__=="__main__":
     data = Data_import(nb=1, lang="eng")
-    print(data.create_corpus())
+    data.split_for_video(data.create_corpus()[0])
