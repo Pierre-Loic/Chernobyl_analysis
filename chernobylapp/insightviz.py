@@ -3,29 +3,58 @@
 #
 
 import os
+from datetime import timedelta
 import numpy as np
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, ImageColorGenerator
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 package_directory = os.path.dirname(os.path.abspath(__file__))
 
 class Viz_video:
     """ Create video from wordcloud files """
 
-    def __init__(self):
-        pass
+    def __init__(self, file_name,  df, time_max, episode_nb=1):
+        self.file_name = file_name
+        self.episode_nb = episode_nb
+        self.im = Image.open(file_name)
+        self.time_begin = df.index[0]
+        self.time_end = df.index[-1]
+        self.time_max = time_max
 
-    def add_time(self, df):
-        """ Add time on the wordcloud image """
-        print(df.index[0])
-        print(df.index[-1])
 
-    def add_nb(self):
-        pass
+    def get_size(self):
+        """ Get the size of the image """
+        width, height = self.im.size
+        return width, height
 
-    def add_indicator(self):
-        pass
+    def increase_size(self, increase_height=40):
+        """ Increase the size of the image to add a progress bar """
+        width, height = self.get_size()
+        self.width = width
+        self.new_height = height+increase_height
+        self.new_img = Image.new("RGB",(width, self.new_height), color = 'black')
+        self.new_img.paste(self.im, (0,0))
+
+    def add_info(self):
+        """ Add the episode of the serie """
+        self.increase_size()
+        self.draw = ImageDraw.Draw(self.new_img)
+        font = ImageFont.truetype("arial", 14)
+        self.draw.text((10, self.new_height-30),"Episode "+ str(self.episode_nb),(255,255,255),font=font)
+        self.draw.rectangle(self.calcul_bar(timedelta(0), self.time_max, self.time_max), outline="white")
+        self.draw.rectangle(self.calcul_bar(self.time_begin, self.time_end, self.time_max), fill="white")
+        self.new_img.save(self.file_name)
+
+    def calcul_bar(self, min_val, max_val, max_abs):
+        """ Calculate coordinates for the progress bar """
+        min_x = round(0.2*self.width)
+        max_x = round(0.95*self.width)
+        min_y = self.new_height-30
+        max_y = self.new_height-10
+        xmin_cal = min_x + (max_x - min_x) * (min_val / max_abs)
+        xmax_cal = min_x + (max_x - min_x) * (max_val / max_abs)
+        return xmin_cal, min_y, xmax_cal, max_y
 
 class Viz_wordcloud:
     
@@ -44,13 +73,12 @@ class Viz_wordcloud:
         wordcloud = WordCloud(width=width, height=height,
                       random_state=21, max_font_size=max_font).generate_from_frequencies(self.data)
         plt.figure(figsize=(15, 12))
-        plt.imshow(wordcloud, interpolation="bilinear")
+        plt.imshow(wordcloud, interpolation="bilinear", aspect="auto")
         plt.axis('off')
         self.output(file_name)
 
     def color_word_cloud(self, color_to_words, default_color="grey", file_name=None):
         """ Generate word cloud with meaningful colors """
-        # not debug
         wc = WordCloud(collocations=False).generate_from_frequencies(self.data)
         word_to_color = {word: color
                               for (color, words) in color_to_words.items()
