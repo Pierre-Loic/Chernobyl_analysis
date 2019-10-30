@@ -1,2 +1,10 @@
 pytest
 pandas
+numpy
+matplotlib
+wordcloud
+pillow
+opencv-python
+gensim
+nltk
+sklearn
