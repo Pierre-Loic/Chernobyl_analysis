@@ -1,13 +1,7 @@
-# Chernobyl_analysis
+# Conférence PyConFr 2019 - 
 
-- Context
+Ce repository contient le code utilisé pour la présentaion de la conférence. Comme indiqué dans la conclusion, toutes les fonctionnalités ne sont pas 
+finalisées.
 
-This repository contains the code used to extract data from the subtitles of the Chernobyl series
+- Pour plus de détails : [site de la conférence Chernobyl-NLP](https://pierre-loic.github.io/)
 
-- How to use the code
-
-
-- Python Libraries
-
-
-- Bibliography
